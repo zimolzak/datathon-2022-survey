@@ -13,6 +13,7 @@ rm(list=ls())
 graphics.off()
 
 library(Hmisc)
+library(dplyr)
 ```
 
 
@@ -139,18 +140,18 @@ levels(data$wpfda.factor)=c("1 (Disagree)","2","3 (Neutral)","4","5 (Agree)")
 levels(data$bcm_datathon_survey_2022_postdatathon_knowledge_pa_complete.factor)=c("Incomplete","Unverified","Complete")
 ```
 
+```{r renaming}
+data %>%
+  rename(
+    academic_rank = ar
+  )
+```
+
 
 # Inspect data
 
 ```{r prelim}
 dim(data)
-
-```
-
-
-# Long data dump
-
-```{r dump}
-head(data)
+names(data)
 ```
 
