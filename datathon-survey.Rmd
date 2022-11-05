@@ -5,25 +5,23 @@ date: "2022-11-05"
 output: pdf_document
 ---
 
+# Setup
 
-```{r initialize}
+```{r initialize, message=FALSE, warning=FALSE}
 #Clear existing data and graphics
 rm(list=ls())
 graphics.off()
-#Load Hmisc library
-library(Hmisc)
 
+library(Hmisc)
 ```
 
 
 ```{r import-data}
-#Read Data
 data=read.csv('2022BCMDatathonSurve_DATA_2022-11-03_1247.csv')
-
 ```
 
 
-```{r labels-etc}
+```{r labels-etc, echo=FALSE}
 #Setting Labels
 
 label(data$record_id)="Record ID"
@@ -147,5 +145,12 @@ levels(data$bcm_datathon_survey_2022_postdatathon_knowledge_pa_complete.factor)=
 ```{r prelim}
 dim(data)
 
+```
+
+
+# Long data dump
+
+```{r dump}
 head(data)
 ```
+
