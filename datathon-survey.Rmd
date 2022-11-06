@@ -13,6 +13,7 @@ graphics.off()
 
 library(Hmisc)
 library(dplyr)
+library(tidyr)
 ```
 
 
@@ -280,25 +281,31 @@ quantile(data_numeric$percent_with_it, na.rm = TRUE)
 - the success stacked bar graph
 
 
-```{r stack-graph, eval=FALSE, include=FALSE}
+```{r stack-graph}
+
 data_numeric %>%
-  gather(`workedTeamReverse`, `collab.outside`, `collab.new`, `completed`,
-  	`answered`, `pub.abstract`, `pub.paper`, key = "Dimension", value = "Success_nonfactor") %>%
-  filter(!is.na(Success_nonfactor)) %>%
-  mutate_at(vars(Success_nonfactor), ~ case_when(
-  	. == 1 ~ "Fully",
-  	. == 0.5 ~ "Partially",
-  	. == 0 ~ "None")) %>%
-  mutate_at(vars(Dimension), ~ case_when(
-  	. == "workedTeamReverse" ~ "Collab. totally\nnew team",
-  	. == "collab.outside" ~ "Collaborated\noutside",
-  	. == "collab.new" ~ "Collab. w/\nany new",
-  	. == "completed" ~ "Completed\nproject",
-  	. == "answered" ~ "Answered\nquestion",
-  	. == "pub.abstract" ~ "Published\nabstract",
-  	. == "pub.paper" ~ "Published\npaper",
-  	TRUE ~ .)) %>%
-  mutate(Success = factor(Success_nonfactor, levels=c("Fully","Partially","None"), ordered=TRUE)) -> collab_success
+  select(succeed_completed, succeed_answered, succeed_collaborated_outside, succeed_collaborated_people,
+         success_abstract, success_paper) %>%
+  gather(`succeed_completed`, `succeed_answered`, `succeed_collaborated_outside`,
+         `succeed_collaborated_people`, `success_abstract`, `success_paper`,
+         key = "Dimension", value = "Success_nonfactor") %>%
+  filter(!is.na(Success_nonfactor)) -> collab_success
+  # mutate_at(vars(Success_nonfactor), ~ case_when(
+  # 	. == 1 ~ "Fully",
+  # 	. == 0.5 ~ "Partially",
+  # 	. == 0 ~ "None")) %>%
+  # mutate_at(vars(Dimension), ~ case_when(
+  # 	. == "workedTeamReverse" ~ "Collab. totally\nnew team",
+  # 	. == "collab.outside" ~ "Collaborated\noutside",
+  # 	. == "collab.new" ~ "Collab. w/\nany new",
+  # 	. == "completed" ~ "Completed\nproject",
+  # 	. == "answered" ~ "Answered\nquestion",
+  # 	. == "pub.abstract" ~ "Published\nabstract",
+  # 	. == "pub.paper" ~ "Published\npaper",
+  # 	TRUE ~ .)) %>%
+  
+  # mutate(Success = factor(Success_nonfactor, levels=c("Fully","Partially","None"), ordered=TRUE)) -> collab_success
+
 
 
 ```
