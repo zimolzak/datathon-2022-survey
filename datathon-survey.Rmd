@@ -286,8 +286,16 @@ quantile(data_numeric$percent_with_it, na.rm = TRUE)
 data_numeric %>%
   select(succeed_completed, succeed_answered, succeed_collaborated_outside, succeed_collaborated_people,
          success_abstract, success_paper) %>%
-  gather(`succeed_completed`, `succeed_answered`, `succeed_collaborated_outside`,
-         `succeed_collaborated_people`, `success_abstract`, `success_paper`,
+  rename(
+    completed = succeed_completed,
+    answered = succeed_answered,
+    collab_outside = succeed_collaborated_outside,
+    collab_ppl = succeed_collaborated_people,
+    abstract = success_abstract,
+    paper = success_paper
+  ) %>%
+  gather(`completed`, `answered`, `collab_outside`,
+         `collab_ppl`, `abstract`, `paper`,
          key = "Dimension", value = "Success_nonfactor") %>%
   filter(!is.na(Success_nonfactor)) -> collab_success
   # mutate_at(vars(Success_nonfactor), ~ case_when(
@@ -306,7 +314,10 @@ data_numeric %>%
   
   # mutate(Success = factor(Success_nonfactor, levels=c("Fully","Partially","None"), ordered=TRUE)) -> collab_success
 
-
+ggplot(collab_success, aes(Dimension)) +
+	geom_bar(aes(fill = as.factor(Success_nonfactor))) +
+	labs(x="Datathon goal", title = "1 Yes, 2 Partly, 3 No", subtitle = 'Except when 1 yes, 2 no! What is 0?') +
+	scale_fill_grey()
 
 ```
 
