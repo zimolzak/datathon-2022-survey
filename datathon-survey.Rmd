@@ -143,41 +143,49 @@ levels(data$bcm_datathon_survey_2022_postdatathon_knowledge_pa_complete.factor)=
 ```{r renaming, include=FALSE}
 data %>%
   rename(
-    academic_rank = ar,
-    department = pdrc,
-    years = yabcm,
-    prior_datathon = phdaai,
-    prior_ehr = qipr,
-    team_size = pot,
-    team_prior_work = wwdtm,
-    role_clinical = role___1,
-    role_lead = role___2,
-    role_reviewer = role___3,
-    role_datasci = role___4,
-    role_stats = role___5,
-    role_datawarehouse = role___6,
-    role_datamgr = role___7,
-    role_learner = role___8,
-    role_other = role___9,
+    academic_rank = ar.factor,
+    department = pdrc,  # not a factor
+    years = yabcm,  # numeric
+    prior_datathon = phdaai.factor,
+    prior_ehr = qipr.factor,
+    team_size = pot,  # numeric
+    team_prior_work = wwdtm.factor,
+    role_clinical = role___1.factor,
+    role_lead = role___2.factor,
+    role_reviewer = role___3.factor,
+    role_datasci = role___4.factor,
+    role_stats = role___5.factor,
+    role_datawarehouse = role___6.factor,
+    role_datamgr = role___7.factor,
+    role_learner = role___8.factor,
+    role_other = role___9.factor,
+    
+    # these have factor but NOT using because I want to graph.
+    # 3 pre, 3 post, 6 succeed
+    # Likerts are easy to understand the meaning of each number.
     pre_know_avail = kadapr,
     pre_know_use = kadupr,
     pre_know_limit = kadlpr,
-    person_hours = hrdw,
-    percent_with_it = prodw,
-    difficult_obtain = doifda,
-    difficult_working = dwwda,
     post_know_avail = kadaf,
     post_know_use = kaduf,
     post_know_limit = kadlf,
-    succeed_completed = cpbeoda,
-    succeed_answered = sacq,
-    succeed_collaborated_outside = cwiod,
-    succeed_collaborated_people = cwni,
-    attitude_future_study = pcfsuda,
-    success_abstract = tpriasa,
-    success_paper = tdprip,
-    attitude_valuable = pidaav,
-    attitude_future_datathon = wpfda
+    
+    # These are tricky because Redcap set up levels in non intuitive way.
+    succeed_completed = cpbeoda,  # yes partially no
+    succeed_answered = sacq,  # yes partially no
+    succeed_collaborated_outside = cwiod,  # yes no
+    succeed_collaborated_people = cwni, # yes no
+    success_abstract = tpriasa,  # yes planned no
+    success_paper = tdprip,  # yes planned no
+
+    # Back to ordinary variables where we WILL use factors.
+    person_hours = hrdw,  # numeric
+    percent_with_it = prodw,  # numeric
+    difficult_obtain = doifda.factor,
+    difficult_working = dwwda.factor,
+    attitude_future_study = pcfsuda.factor,
+    attitude_valuable = pidaav.factor,
+    attitude_future_datathon = wpfda.factor
   ) %>%
   select (
     academic_rank,
@@ -214,8 +222,7 @@ data %>%
     success_abstract,
     success_paper,
     attitude_valuable,
-    attitude_future_datathon,
-    ar.factor
+    attitude_future_datathon
   ) -> data_numeric
 ```
 
@@ -228,16 +235,10 @@ data %>%
 dim(data_numeric)[1]
 ```
 
-
-
-
-
-
-
 ## Rank, Datathon experience, EHR experience
 
 ```{r categorical}
-table(data_numeric$ar.factor)
+table(data_numeric$academic_rank)
 table(data_numeric$prior_datathon)
 table(data_numeric$prior_ehr)
 
@@ -277,3 +278,28 @@ quantile(data_numeric$percent_with_it, na.rm = TRUE)
 
 - three pre/post graphs
 - the success stacked bar graph
+
+
+```{r stack-graph, eval=FALSE, include=FALSE}
+data_numeric %>%
+  gather(`workedTeamReverse`, `collab.outside`, `collab.new`, `completed`,
+  	`answered`, `pub.abstract`, `pub.paper`, key = "Dimension", value = "Success_nonfactor") %>%
+  filter(!is.na(Success_nonfactor)) %>%
+  mutate_at(vars(Success_nonfactor), ~ case_when(
+  	. == 1 ~ "Fully",
+  	. == 0.5 ~ "Partially",
+  	. == 0 ~ "None")) %>%
+  mutate_at(vars(Dimension), ~ case_when(
+  	. == "workedTeamReverse" ~ "Collab. totally\nnew team",
+  	. == "collab.outside" ~ "Collaborated\noutside",
+  	. == "collab.new" ~ "Collab. w/\nany new",
+  	. == "completed" ~ "Completed\nproject",
+  	. == "answered" ~ "Answered\nquestion",
+  	. == "pub.abstract" ~ "Published\nabstract",
+  	. == "pub.paper" ~ "Published\npaper",
+  	TRUE ~ .)) %>%
+  mutate(Success = factor(Success_nonfactor, levels=c("Fully","Partially","None"), ordered=TRUE)) -> collab_success
+
+
+```
+
