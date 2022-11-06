@@ -5,9 +5,8 @@ date: "2022-11-05"
 output: pdf_document
 ---
 
-# Setup
 
-```{r initialize, message=FALSE, warning=FALSE}
+```{r initialize, message=FALSE, warning=FALSE, include=FALSE}
 #Clear existing data and graphics
 rm(list=ls())
 graphics.off()
@@ -17,7 +16,7 @@ library(dplyr)
 ```
 
 
-```{r import-data}
+```{r import-data, include=FALSE}
 data=read.csv('2022BCMDatathonSurve_DATA_2022-11-03_1247.csv')
 ```
 
@@ -140,7 +139,8 @@ levels(data$wpfda.factor)=c("1 (Disagree)","2","3 (Neutral)","4","5 (Agree)")
 levels(data$bcm_datathon_survey_2022_postdatathon_knowledge_pa_complete.factor)=c("Incomplete","Unverified","Complete")
 ```
 
-```{r renaming}
+
+```{r renaming, include=FALSE}
 data %>%
   rename(
     academic_rank = ar,
@@ -214,15 +214,66 @@ data %>%
     success_abstract,
     success_paper,
     attitude_valuable,
-    attitude_future_datathon
+    attitude_future_datathon,
+    ar.factor
   ) -> data_numeric
 ```
 
 
-# Inspect data
+# Table 1 components
+
+## Number of survey responses
 
 ```{r prelim}
-dim(data)
-names(data)
+dim(data_numeric)[1]
 ```
 
+
+
+
+
+
+
+## Rank, Datathon experience, EHR experience
+
+```{r categorical}
+table(data_numeric$ar.factor)
+table(data_numeric$prior_datathon)
+table(data_numeric$prior_ehr)
+
+
+```
+
+
+## Datathon roles
+
+```{r categor-roles}
+table(data_numeric$role_clinical)
+table(data_numeric$role_lead)
+table(data_numeric$role_reviewer)
+table(data_numeric$role_datasci)
+table(data_numeric$role_stats)
+table(data_numeric$role_datawarehouse)
+table(data_numeric$role_datamgr)
+table(data_numeric$role_learner)
+table(data_numeric$role_other)
+
+
+```
+
+## Continuous variables (experience, team size, effort, IT effort)
+
+```{r continuous}
+# years, team size, person hours, percent IT
+quantile(data_numeric$years)
+quantile(data_numeric$team_size)
+quantile(data_numeric$person_hours, na.rm = TRUE)
+quantile(data_numeric$percent_with_it, na.rm = TRUE)
+```
+
+
+# Graphs of outcomes
+
+
+- three pre/post graphs
+- the success stacked bar graph
