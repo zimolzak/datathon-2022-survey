@@ -321,3 +321,57 @@ ggplot(collab_success, aes(Dimension)) +
 
 ```
 
+```{r pre-post-plot, eval=FALSE, include=FALSE}
+jitter_absolute = 0.02
+jx = jitter_absolute
+jy = 5 * jitter_absolute
+
+
+data_numeric %>%
+gather(`pre_know_use`, `post_know_use`, key="prepost", value="know.use") %>%
+mutate(numeric_prepost = case_when(prepost == "pre_know_use" ~ 0, prepost == "post_know_use" ~ 1),
+	eps_x = runif(nrow(data_numeric) * 2, -1 * jx, jx),
+	eps_y = runif(nrow(data_numeric) * 2, -1 * jy, jy)) -> use
+
+# FIXME - need to get that "id" column working?
+
+data_numeric %>%
+gather(`pre_know_avail`, `post_know_avail`, key="prepost", value="know.avail") %>%
+mutate(numeric_prepost = case_when(prepost == "pre_know_avail" ~ 0, prepost == "post_know_avail" ~ 1)) %>%
+select(id, numeric_prepost, know.avail) -> available
+
+data_numeric %>%
+gather(`pre_know_limit`, `post_know_limit`, key="prepost", value="know.limit") %>%
+mutate(numeric_prepost = case_when(prepost == "pre_know_limit" ~ 0, prepost == "post_know_limit" ~ 1)) %>%
+select(id, numeric_prepost, know.limit) -> limit
+
+use %>%
+full_join(available, by=c("id", "numeric_prepost")) %>%
+full_join(limit, by=c("id", "numeric_prepost")) -> gathered_all
+
+gathered_all %>%
+mutate(use = know.use + eps_y, avail = know.avail + eps_y, limit = know.limit + eps_y,
+	nprepost = numeric_prepost + eps_x) %>%
+select(id, nprepost, use, avail, limit) %>%
+gather(`use`, `avail`, `limit`, key="dimension", value="knowledge") %>%
+mutate_at(vars(dimension), ~ case_when(. == "use" ~ "How to use data warehouse",
+	. == "avail" ~ "Data availability",
+	. == "limit" ~ "Data warehouse limitations",
+	TRUE ~ .)) -> double_gathered   # goes into one big facetted paired plot
+
+
+
+
+
+
+
+
+## facet
+ggplot(double_gathered, aes(x = nprepost, y = knowledge, group = id)) +
+ geom_point() +
+  geom_line() +
+  scale_x_continuous(breaks = c(0,1), labels = c("Before", "After")) +
+  labs(x = NULL, y = "Self-reported knowledge") +
+  facet_wrap(vars(dimension), nrow = 2) -> facet
+```
+
