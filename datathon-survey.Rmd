@@ -178,6 +178,14 @@ data %>%
     succeed_collaborated_people = cwni, # yes no
     success_abstract = tpriasa,  # yes planned no
     success_paper = tdprip,  # yes planned no
+    
+    # now do with factors, easier to make tables
+    f_completed = cpbeoda.factor,
+    f_answered = sacq.factor,
+    f_collab_out = cwiod.factor,
+    f_collab_ppl = cwni.factor,
+    f_abstract = tpriasa.factor,
+    f_paper = tdprip.factor,
 
     # Back to ordinary variables where we WILL use factors.
     person_hours = hrdw,  # numeric
@@ -196,6 +204,7 @@ data %>%
     prior_ehr,
     team_size,
     team_prior_work,
+    
     role_clinical,
     role_lead,
     role_reviewer,
@@ -205,6 +214,7 @@ data %>%
     role_datamgr,
     role_learner,
     role_other,
+    
     pre_know_avail,
     pre_know_use,
     pre_know_limit,
@@ -215,13 +225,22 @@ data %>%
     post_know_avail,
     post_know_use,
     post_know_limit,
+    
     succeed_completed,
     succeed_answered,
     succeed_collaborated_outside,
     succeed_collaborated_people,
-    attitude_future_study,
     success_abstract,
     success_paper,
+    
+    f_completed,
+    f_answered,
+    f_collab_out,
+    f_collab_ppl,
+    f_abstract,
+    f_paper,
+    
+    attitude_future_study,
     attitude_valuable,
     attitude_future_datathon
   ) -> data_numeric
@@ -236,7 +255,10 @@ data %>%
 dim(data_numeric)[1]
 ```
 
-## Rank, Datathon experience, EHR experience
+## Academic rank, Datathon experience, EHR experience
+
+You can find the name of each variable that we are tabulating after the little
+dollar sign.
 
 ```{r categorical}
 table(data_numeric$academic_rank)
@@ -259,14 +281,11 @@ table(data_numeric$role_datawarehouse)
 table(data_numeric$role_datamgr)
 table(data_numeric$role_learner)
 table(data_numeric$role_other)
-
-
 ```
 
-## Continuous variables (experience, team size, effort, IT effort)
+## Percentiles of: years at BCM, team size, effort, IT effort
 
 ```{r continuous}
-# years, team size, person hours, percent IT
 quantile(data_numeric$years)
 quantile(data_numeric$team_size)
 quantile(data_numeric$person_hours, na.rm = TRUE)
@@ -274,15 +293,15 @@ quantile(data_numeric$percent_with_it, na.rm = TRUE)
 ```
 
 
-# Graphs of outcomes
+# Measures of team success
 
+## Figure
 
-- three pre/post graphs
-- the success stacked bar graph
+Ignore this plot so far (skip ahead to tables), because I need to fix the way the
+numeric coding maps to meaningful words. Just an example of future look and
+feel of the plot.
 
-
-```{r stack-graph}
-
+```{r stack-graph, echo=FALSE}
 data_numeric %>%
   select(succeed_completed, succeed_answered, succeed_collaborated_outside, succeed_collaborated_people,
          success_abstract, success_paper) %>%
@@ -320,6 +339,39 @@ ggplot(collab_success, aes(Dimension)) +
 	scale_fill_grey()
 
 ```
+
+## Tables of self-reported success
+
+We tablulate the following questions in this order:
+
+1. I completed my project by the end of the datathon
+2. I successfully answered my clinical question
+3. I collaborated with individuals outside of my department
+4. I collaborated with new individuals as part of the datathon
+5. Our team datathon project resulted in a scientific abstract for a local or national meeting
+6. Our team datathon project resulted in a publication
+
+Again, to confirm
+which variable we're tabulating, look at the variable name after the dollar sign,
+inside each grey rectangle of R code.
+
+
+
+```{r tables-success}
+table(data_numeric$f_completed)
+table(data_numeric$f_answered)
+table(data_numeric$f_collab_out)
+table(data_numeric$f_collab_ppl)
+table(data_numeric$f_abstract)
+table(data_numeric$f_paper)
+```
+
+
+
+
+# Pre-post knowledge figure
+
+To be completed
 
 ```{r pre-post-plot, eval=FALSE, include=FALSE}
 jitter_absolute = 0.02
