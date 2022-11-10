@@ -295,10 +295,10 @@ quantile(data_numeric$percent_with_it, na.rm = TRUE)
 
 # Measures of team success
 
-## Figure
+## Ignore (skip) This Figure.
 
 Ignore this plot so far (skip ahead to tables), because I need to fix the way the
-numeric coding maps to meaningful words. Just an example of future look and
+numeric coding maps to meaningful words. This is just an example of future look and
 feel of the plot.
 
 ```{r stack-graph, echo=FALSE}
@@ -342,7 +342,9 @@ ggplot(collab_success, aes(Dimension)) +
 
 ## Tables of self-reported success
 
-We tablulate the following questions in this order:
+Read this section rather than looking at the figure.
+
+We tabulate the following questions in this order:
 
 1. I completed my project by the end of the datathon
 2. I successfully answered my clinical question
@@ -366,6 +368,30 @@ table(data_numeric$f_abstract)
 table(data_numeric$f_paper)
 ```
 
+
+
+# Satisfaction/Attitudes
+
+```{r satisfaction}
+table(data_numeric$attitude_valuable)
+table(data_numeric$attitude_future_datathon)
+table(data_numeric$attitude_future_study)
+
+data_numeric %>%
+  drop_na(attitude_valuable) %>%
+  ggplot(aes(x=attitude_valuable)) +
+  geom_bar()
+data_numeric %>%
+  drop_na(attitude_future_datathon) %>%
+  ggplot(aes(x=attitude_future_datathon)) +
+  geom_bar() +
+  scale_x_discrete(drop = FALSE)
+data_numeric %>%
+  drop_na(attitude_future_study) %>%
+  ggplot(aes(x=attitude_future_study)) +
+  geom_bar() +
+  scale_x_discrete(drop = FALSE)
+```
 
 
 
