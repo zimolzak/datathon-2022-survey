@@ -453,3 +453,9 @@ ggplot(double_gathered, aes(x = nprepost, y = knowledge, group = id)) +
   facet_wrap(vars(dimension), nrow = 2) -> facet
 ```
 
+# Free text comments
+
+```{r freetext}
+data$www
+```
+
