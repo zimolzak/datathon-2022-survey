@@ -372,32 +372,102 @@ table(data_numeric$f_paper)
 
 # Satisfaction/Attitudes
 
+I plan to conduct future studies using data from the BCM warehouse"
+label(data$tpriasa)="6. Our team datathon project resulted in a scientific abstract for a local or national meeting"
+label(data$tdprip)="7. Our team datathon project resulted in a publication"
+label(data$pidaav)="8. Participating in the BCM datathon was a valuable experience"
+label(data$wpfda)="9. I would participate in a future BCM datathon"
+
+
 ```{r satisfaction}
 table(data_numeric$attitude_valuable)
 table(data_numeric$attitude_future_datathon)
 table(data_numeric$attitude_future_study)
 
+
 data_numeric %>%
   drop_na(attitude_valuable) %>%
   ggplot(aes(x=attitude_valuable)) +
-  geom_bar()
+  geom_bar() +
+  labs(x="Level of agreement",
+       title ="Participating in the datathon was a valuable experience")
 data_numeric %>%
   drop_na(attitude_future_datathon) %>%
   ggplot(aes(x=attitude_future_datathon)) +
   geom_bar() +
-  scale_x_discrete(drop = FALSE)
+  scale_x_discrete(drop = FALSE) +
+  labs(x="Level of agreement",
+       title ="I would participate in a future datathon")
 data_numeric %>%
   drop_na(attitude_future_study) %>%
   ggplot(aes(x=attitude_future_study)) +
   geom_bar() +
-  scale_x_discrete(drop = FALSE)
+  scale_x_discrete(drop = FALSE) +
+  labs(x="Level of agreement",
+       title ="I plan to conduct future studies using data from the BCM warehouse")
 ```
 
 
 
 # Pre-post knowledge figure
 
-To be completed
+
+
+ How knowledgeable were you about data availability at BCM prior to the datathon"
+
+
+2. How knowledgeable were you about how to use a data warehouse prior to the datathon?"
+
+
+3. What was your understanding of a data warehouse limitations prior to the datathon"
+
+
+
+```{r simple-bar-pre-post}
+
+
+#### USE
+
+data_numeric %>%
+  rename(Before = pre_know_use, After = post_know_use) %>%
+  gather(`Before`, `After`, key="prepost", value="know.use") %>%
+  drop_na(know.use) %>%
+  ggplot(aes(x=know.use)) +
+  geom_bar() +
+  facet_grid(vars(prepost)) +
+  labs(title="How knowledgeable were you about how to use a data warehouse?",
+       x="Knowledge level")
+
+##### AVAIL
+
+data_numeric %>%
+  rename(Before = pre_know_avail, After = post_know_avail) %>%
+  gather(`Before`, `After`, key="prepost", value="know.use") %>%
+  drop_na(know.use) %>%
+  ggplot(aes(x=know.use)) +
+  geom_bar() +
+  facet_grid(vars(prepost)) +
+  labs(title="How knowledgeable were you about data availability at BCM?",
+       x="Knowledge level")
+
+
+#### LIMIT
+
+data_numeric %>%
+  rename(Before = pre_know_limit, After = post_know_limit) %>%
+  gather(`Before`, `After`, key="prepost", value="know.use") %>%
+  drop_na(know.use) %>%
+  ggplot(aes(x=know.use)) +
+  geom_bar() +
+  facet_grid(vars(prepost)) +
+  labs(title="What was your understanding of data warehouse limitations?",
+       x="Knowledge level")
+
+
+```
+
+
+Paired plot: To be completed
 
 ```{r pre-post-plot, eval=FALSE, include=FALSE}
 jitter_absolute = 0.02
