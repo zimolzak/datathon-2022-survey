@@ -416,45 +416,6 @@ How knowledgeable were you about how to use a data warehouse prior to the datath
 
 What was your understanding of a data warehouse limitations prior to the datathon"
 
-```{r simple-bar-pre-post}
-
-#### USE
-
-data_numeric %>%
-  rename(Before = pre_know_use, After = post_know_use) %>%
-  gather(`Before`, `After`, key="prepost", value="know.use") %>%
-  drop_na(know.use) %>%
-  ggplot(aes(x=know.use)) +
-  geom_bar() +
-  facet_grid(vars(prepost)) +
-  labs(title="How knowledgeable were you about how to use a data warehouse?",
-       x="Knowledge level")
-
-##### AVAIL
-
-data_numeric %>%
-  rename(Before = pre_know_avail, After = post_know_avail) %>%
-  gather(`Before`, `After`, key="prepost", value="know.use") %>%
-  drop_na(know.use) %>%
-  ggplot(aes(x=know.use)) +
-  geom_bar() +
-  facet_grid(vars(prepost)) +
-  labs(title="How knowledgeable were you about data availability at BCM?",
-       x="Knowledge level")
-
-#### LIMIT
-
-data_numeric %>%
-  rename(Before = pre_know_limit, After = post_know_limit) %>%
-  gather(`Before`, `After`, key="prepost", value="know.use") %>%
-  drop_na(know.use) %>%
-  ggplot(aes(x=know.use)) +
-  geom_bar() +
-  facet_grid(vars(prepost)) +
-  labs(title="What was your understanding of data warehouse limitations?",
-       x="Knowledge level")
-```
-
 ```{r more-facetted}
 data_numeric %>%
   select(starts_with("pre_"), starts_with("post_")) %>%
