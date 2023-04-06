@@ -487,16 +487,32 @@ data_numeric %>%
     )
   ) -> attitude_domain_time
 
-attitude_domain_time %>%
+nice_facet <- attitude_domain_time %>%
   ggplot(aes(x=knowledge.level)) +
   geom_bar(aes(fill=timepoint)) +
   facet_grid(vars(timepoint, domain)) +
   theme(
     strip.text.y = element_text(angle = 0),
-    legend.position = "none") +
-  labs(x="Knowledge Level", title="Datathon increased self-reported knowledge across 3 domains")
+    legend.position = "none"
+  ) +
+  labs(x="Knowledge Level", title="Datathon increased self-reported knowledge\nacross 3 domains")
 
+nice_facet
 
+bigfont <- theme(
+  plot.title = element_text(size = 30),
+  axis.title = element_text(size=20),
+  axis.text = element_text(size=15),
+  strip.text.y = element_text(size = 15)
+  )
+
+ggsave(
+  filename = 'nice_facet.png',
+  plot = nice_facet + bigfont,
+  width = 11.5,
+  height = 17.6,
+  units = "in"
+)
 
 ```
 
