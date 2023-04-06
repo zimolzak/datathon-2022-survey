@@ -489,8 +489,8 @@ data_numeric %>%
 
 nice_facet <- attitude_domain_time %>%
   ggplot(aes(x=knowledge.level)) +
-  geom_bar(aes(fill=timepoint)) +
-  facet_grid(vars(timepoint, domain)) +
+  geom_bar(aes(fill=timepoint), position="dodge") +
+  facet_grid(vars(domain)) +
   theme(
     strip.text.y = element_text(angle = 0),
     legend.position = "none"
