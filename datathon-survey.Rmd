@@ -428,6 +428,8 @@ data_numeric %>%
 
 #### USE
 
+
+
 data_numeric %>%
   rename(Before = pre_know_use, After = post_know_use) %>%
   gather(`Before`, `After`, key="prepost", value="know.use") %>%
@@ -462,6 +464,38 @@ data_numeric %>%
   facet_grid(vars(prepost)) +
   labs(title="What was your understanding of data warehouse limitations?",
        x="Knowledge level")
+
+
+```
+
+
+```{r more-facetted}
+data_numeric %>%
+  select(starts_with("pre_"), starts_with("post_")) %>%
+  gather(
+    starts_with("pre_"), starts_with("post_"), 
+    key="varname", value="knowledge.level") %>%
+  mutate(
+    timepoint = case_when(
+      grepl('pre', varname) ~ 'Before',
+      grepl('post', varname) ~ 'After'
+    ),
+    domain = case_when(
+      grepl('avail', varname) ~ 'Data Availability',
+      grepl('use', varname) ~ 'Warehouse Use',
+      grepl('limit', varname) ~ 'Limitations'
+    )
+  ) -> attitude_domain_time
+
+attitude_domain_time %>%
+  ggplot(aes(x=knowledge.level)) +
+  geom_bar(aes(fill=timepoint)) +
+  facet_grid(vars(timepoint, domain)) +
+  theme(
+    strip.text.y = element_text(angle = 0),
+    legend.position = "none") +
+  labs(x="Knowledge Level", title="Datathon increased self-reported knowledge across 3 domains")
+
 
 
 ```
