@@ -474,8 +474,9 @@ zero <- data.frame(Timepoint = "After", domain="Limitations", knowledge.level=2,
 zero_padded <- bind_rows(counted, zero)
 
 zero_padded %>%
-  ggplot(aes(x=knowledge.level, y=count)) +
-  geom_col(aes(fill=Timepoint), position= position_dodge(preserve = "single")) +
+  ggplot(aes(x=knowledge.level, y=count, color=Timepoint)) +
+  geom_point() +
+  geom_line() +
   facet_grid(vars(domain)) +
   theme(
     strip.text.y = element_text(angle = 0)
