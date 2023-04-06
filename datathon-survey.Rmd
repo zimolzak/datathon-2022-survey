@@ -5,7 +5,6 @@ date: "November, 2022"
 output: pdf_document
 ---
 
-
 ```{r initialize, message=FALSE, warning=FALSE, include=FALSE}
 #Clear existing data and graphics
 rm(list=ls())
@@ -16,11 +15,9 @@ library(dplyr)
 library(tidyr)
 ```
 
-
 ```{r import-data, include=FALSE}
 data=read.csv('2022BCMDatathonSurve_DATA_2022-11-03_1247.csv')
 ```
-
 
 ```{r labels-etc, echo=FALSE}
 #Setting Labels
@@ -140,7 +137,6 @@ levels(data$wpfda.factor)=c("1 (Disagree)","2","3 (Neutral)","4","5 (Agree)")
 levels(data$bcm_datathon_survey_2022_postdatathon_knowledge_pa_complete.factor)=c("Incomplete","Unverified","Complete")
 ```
 
-
 ```{r renaming, include=FALSE}
 data %>%
   rename(
@@ -247,6 +243,8 @@ data %>%
 ```
 
 
+
+
 # Table 1 components
 
 ## Number of survey responses
@@ -267,7 +265,6 @@ table(data_numeric$prior_ehr)
 
 
 ```
-
 
 ## Datathon roles
 
@@ -291,6 +288,8 @@ quantile(data_numeric$team_size)
 quantile(data_numeric$person_hours, na.rm = TRUE)
 quantile(data_numeric$percent_with_it, na.rm = TRUE)
 ```
+
+
 
 
 # Measures of team success
@@ -357,8 +356,6 @@ Again, to confirm
 which variable we're tabulating, look at the variable name after the dollar sign,
 inside each grey rectangle of R code.
 
-
-
 ```{r tables-success}
 table(data_numeric$f_completed)
 table(data_numeric$f_answered)
@@ -370,20 +367,19 @@ table(data_numeric$f_paper)
 
 
 
-# Satisfaction/Attitudes
 
-I plan to conduct future studies using data from the BCM warehouse"
-label(data$tpriasa)="6. Our team datathon project resulted in a scientific abstract for a local or national meeting"
-label(data$tdprip)="7. Our team datathon project resulted in a publication"
-label(data$pidaav)="8. Participating in the BCM datathon was a valuable experience"
-label(data$wpfda)="9. I would participate in a future BCM datathon"
+# Satisfaction/Attitude bar graphs
 
+I plan to conduct future studies using data from the BCM warehouse
+
+Participating in the BCM datathon was a valuable experience
+
+I would participate in a future BCM datathon
 
 ```{r satisfaction}
 table(data_numeric$attitude_valuable)
 table(data_numeric$attitude_future_datathon)
 table(data_numeric$attitude_future_study)
-
 
 data_numeric %>%
   drop_na(attitude_valuable) %>%
@@ -391,6 +387,7 @@ data_numeric %>%
   geom_bar() +
   labs(x="Level of agreement",
        title ="Participating in the datathon was a valuable experience")
+
 data_numeric %>%
   drop_na(attitude_future_datathon) %>%
   ggplot(aes(x=attitude_future_datathon)) +
@@ -398,6 +395,7 @@ data_numeric %>%
   scale_x_discrete(drop = FALSE) +
   labs(x="Level of agreement",
        title ="I would participate in a future datathon")
+
 data_numeric %>%
   drop_na(attitude_future_study) %>%
   ggplot(aes(x=attitude_future_study)) +
@@ -409,26 +407,18 @@ data_numeric %>%
 
 
 
-# Pre-post knowledge figure
 
+# Knowledge bar graphs
 
+How knowledgeable were you about data availability at BCM prior to the datathon"
 
- How knowledgeable were you about data availability at BCM prior to the datathon"
+How knowledgeable were you about how to use a data warehouse prior to the datathon?"
 
-
-2. How knowledgeable were you about how to use a data warehouse prior to the datathon?"
-
-
-3. What was your understanding of a data warehouse limitations prior to the datathon"
-
-
+What was your understanding of a data warehouse limitations prior to the datathon"
 
 ```{r simple-bar-pre-post}
 
-
 #### USE
-
-
 
 data_numeric %>%
   rename(Before = pre_know_use, After = post_know_use) %>%
@@ -452,7 +442,6 @@ data_numeric %>%
   labs(title="How knowledgeable were you about data availability at BCM?",
        x="Knowledge level")
 
-
 #### LIMIT
 
 data_numeric %>%
@@ -464,10 +453,7 @@ data_numeric %>%
   facet_grid(vars(prepost)) +
   labs(title="What was your understanding of data warehouse limitations?",
        x="Knowledge level")
-
-
 ```
-
 
 ```{r more-facetted}
 data_numeric %>%
@@ -530,69 +516,13 @@ ggsave(
   height = 17.6,
   units = "in"
 )
-
 ```
 
 
-Paired plot: To be completed
 
-```{r pre-post-plot, eval=FALSE, include=FALSE}
-jitter_absolute = 0.02
-jx = jitter_absolute
-jy = 5 * jitter_absolute
-
-
-data_numeric %>%
-gather(`pre_know_use`, `post_know_use`, key="prepost", value="know.use") %>%
-mutate(numeric_prepost = case_when(prepost == "pre_know_use" ~ 0, prepost == "post_know_use" ~ 1),
-	eps_x = runif(nrow(data_numeric) * 2, -1 * jx, jx),
-	eps_y = runif(nrow(data_numeric) * 2, -1 * jy, jy)) -> use
-
-# FIXME - need to get that "id" column working?
-
-data_numeric %>%
-gather(`pre_know_avail`, `post_know_avail`, key="prepost", value="know.avail") %>%
-mutate(numeric_prepost = case_when(prepost == "pre_know_avail" ~ 0, prepost == "post_know_avail" ~ 1)) %>%
-select(id, numeric_prepost, know.avail) -> available
-
-data_numeric %>%
-gather(`pre_know_limit`, `post_know_limit`, key="prepost", value="know.limit") %>%
-mutate(numeric_prepost = case_when(prepost == "pre_know_limit" ~ 0, prepost == "post_know_limit" ~ 1)) %>%
-select(id, numeric_prepost, know.limit) -> limit
-
-use %>%
-full_join(available, by=c("id", "numeric_prepost")) %>%
-full_join(limit, by=c("id", "numeric_prepost")) -> gathered_all
-
-gathered_all %>%
-mutate(use = know.use + eps_y, avail = know.avail + eps_y, limit = know.limit + eps_y,
-	nprepost = numeric_prepost + eps_x) %>%
-select(id, nprepost, use, avail, limit) %>%
-gather(`use`, `avail`, `limit`, key="dimension", value="knowledge") %>%
-mutate_at(vars(dimension), ~ case_when(. == "use" ~ "How to use data warehouse",
-	. == "avail" ~ "Data availability",
-	. == "limit" ~ "Data warehouse limitations",
-	TRUE ~ .)) -> double_gathered   # goes into one big facetted paired plot
-
-
-
-
-
-
-
-
-## facet
-ggplot(double_gathered, aes(x = nprepost, y = knowledge, group = id)) +
- geom_point() +
-  geom_line() +
-  scale_x_continuous(breaks = c(0,1), labels = c("Before", "After")) +
-  labs(x = NULL, y = "Self-reported knowledge") +
-  facet_wrap(vars(dimension), nrow = 2) -> facet
-```
 
 # Free text comments
 
 ```{r freetext}
 data$www
 ```
-
