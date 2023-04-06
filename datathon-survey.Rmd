@@ -489,11 +489,10 @@ data_numeric %>%
 
 nice_facet <- attitude_domain_time %>%
   ggplot(aes(x=knowledge.level)) +
-  geom_bar(aes(fill=timepoint), position="dodge") +
+  geom_bar(aes(fill=timepoint), position= position_dodge2(preserve = "single")) +
   facet_grid(vars(domain)) +
   theme(
-    strip.text.y = element_text(angle = 0),
-    legend.position = "none"
+    strip.text.y = element_text(angle = 0)
   ) +
   labs(x="Knowledge Level", title="Datathon increased self-reported knowledge\nacross 3 domains")
 
