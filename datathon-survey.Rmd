@@ -476,7 +476,7 @@ data_numeric %>%
     starts_with("pre_"), starts_with("post_"), 
     key="varname", value="knowledge.level") %>%
   mutate(
-    timepoint = case_when(
+    Timepoint = case_when(
       grepl('pre', varname) ~ 'Before',
       grepl('post', varname) ~ 'After'
     ),
@@ -487,23 +487,40 @@ data_numeric %>%
     )
   ) -> attitude_domain_time
 
-nice_facet <- attitude_domain_time %>%
-  ggplot(aes(x=knowledge.level)) +
-  geom_bar(aes(fill=timepoint)) +
-  facet_grid(vars(timepoint, domain)) +
+attitude_domain_time %>%
+  group_by(Timepoint, domain, knowledge.level) %>%
+  summarise(count = n()) -> counted
+
+zero <- data.frame(Timepoint = "After", domain="Limitations", knowledge.level=2, count=0.1)
+# FIXME - This is very ad hoc, I know
+# should really inspect programmatically for what is a 0
+# but I did it manually
+# just to fix where the blue bar goes when position=dodge2
+
+zero_padded <- bind_rows(counted, zero)
+
+zero_padded %>%
+  ggplot(aes(x=knowledge.level, y=count)) +
+  geom_col(aes(fill=Timepoint), position= position_dodge(preserve = "single")) +
+  facet_grid(vars(domain)) +
   theme(
-    strip.text.y = element_text(angle = 0),
-    legend.position = "none"
+    strip.text.y = element_text(angle = 0)
   ) +
-  labs(x="Knowledge Level", title="Datathon increased self-reported knowledge\nacross 3 domains")
+  labs(
+    x="Knowledge Level",
+    y="Count",
+    title="Datathon increased self-reported knowledge\nacross 3 domains"
+  ) -> nice_facet
 
 nice_facet
 
 bigfont <- theme(
   plot.title = element_text(size = 30),
-  axis.title = element_text(size=20),
-  axis.text = element_text(size=15),
-  strip.text.y = element_text(size = 15)
+  axis.title = element_text(size=30),
+  axis.text = element_text(size=20),
+  strip.text.y = element_text(size = 20),
+  legend.text = element_text(size=20),
+  legend.title = element_text(size=20)
   )
 
 ggsave(
