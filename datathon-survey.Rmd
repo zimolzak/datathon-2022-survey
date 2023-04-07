@@ -475,8 +475,8 @@ zero_padded <- bind_rows(counted, zero)
 
 zero_padded %>%
   ggplot(aes(x=knowledge.level, y=count, color=Timepoint)) +
-  geom_point() +
-  geom_line() +
+  geom_point(size=6) +
+  geom_line(size=2) +
   facet_grid(vars(domain)) +
   theme(
     strip.text.y = element_text(angle = 0)
